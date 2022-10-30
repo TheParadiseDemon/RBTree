@@ -1,0 +1,19 @@
+# ninja log v5
+5	1422	6885829621089785	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+1423	1677	6885829623279965	RBTree_mine.exe	324fd5ad00e9c593
+7	1657	6885830698797199	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+1657	1892	6885830700907610	RBTree_mine.exe	324fd5ad00e9c593
+102	9986	6888209268847117	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+9987	10781	6888209276897288	RBTree_mine.exe	324fd5ad00e9c593
+4	13377	6888210451162077	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+13377	13636	6888210453332233	RBTree_mine.exe	324fd5ad00e9c593
+4	1156	6888211971188629	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+1156	1467	6888211974358963	RBTree_mine.exe	324fd5ad00e9c593
+6	8187	6888212479982876	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+8188	8397	6888212481753006	RBTree_mine.exe	324fd5ad00e9c593
+5	13268	6888223175471211	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+13268	13470	6888223177452492	RBTree_mine.exe	324fd5ad00e9c593
+5	3267	6888225440874344	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+3268	5491	6888225478198244	RBTree_mine.exe	324fd5ad00e9c593
+4	3650	6888238362015761	CMakeFiles/RBTree_mine.dir/main.cpp.obj	36f2fd8ecce671b1
+3651	12256	6888238413140324	RBTree_mine.exe	324fd5ad00e9c593
