@@ -501,22 +501,7 @@ public:
 int main() {
 
     RBTree* tree = new RBTree();
-    TNode* node = new TNode('A', 100);
-    char let;
-    int num = 0;
-
-    tree->RBInsert(node);
-    /*while (true){
-        std::cin >> let >> num;
-        if (num == -1) break;
-        node = new TNode(let, num);
-        tree->RBInsert(node);
-    }*/
-    tree->RBInsert('A', 100);
-    RBTree* tree1 = new RBTree();
-    node = new TNode('a', 101);
-    tree1->RBInsert(node);
-    if (tree == tree1) std::cout <<"yes\n";
-    tree->printLevelOrder();
+    TNode* node = new TNode();
+   
     return 0;
 }
