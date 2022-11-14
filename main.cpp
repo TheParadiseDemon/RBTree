@@ -112,7 +112,7 @@ private:
 public:
 
     TNode(char let, int num){
-        color = static_cast<Color>(0);
+        color = Color::Red;
         parent = nullptr;
         left = nullptr;
         right = nullptr;
@@ -122,7 +122,7 @@ public:
 
     TNode(){
         room = new ClassList();
-        color = static_cast<Color>(0);
+        color = Color::Red;
         left = nullptr;
         right = nullptr;
         parent = nullptr;
@@ -185,19 +185,10 @@ public:
     void PrintPreOrder(){
         if (this->getRoomNumber() == -1) return;
         char col;
-        col = this->getColor() == static_cast<Color>(0) ? 'R' : 'B';
+        col = this->getColor() == Color::Red ? 'R' : 'B';
         std::cout << this->getRoomLetter() << this->getRoomNumber() << col << this->getRoom()->NodeNumber() << "  ";
         this->getLeft()->PrintPreOrder();
         this->getRight()->PrintPreOrder();
-    }
-
-    explicit operator bool() const {
-        return (this != nullptr);
-    }
-
-    friend bool operator==(TNode a, TNode b){
-        if (!(bool)a && !(bool)b) return true;
-        return (((bool)a == (bool)b) && ((bool)a.getRight() == (bool)b.getRight()) && ((bool)a.getLeft() == (bool)b.getLeft()));
     }
 
     void DeleteSubTree(TNode* Nil){
@@ -215,16 +206,16 @@ public:
         if (this != Nil){
             this->getRight()->PrintOnSide(h + 4, Nil);
             for (int i = 0; i < h; ++i) std::cout << ' ';
-            char col = this->getColor() == static_cast<Color>(0) ? 'R' : 'B';
+            char col = this->getColor() == Color::Red ? 'R' : 'B';
             std::cout << this->getRoomLetter() << this->getRoomNumber() << col << this->getRoom()->NodeNumber() << std::endl;
             this->getLeft()->PrintOnSide(h + 4, Nil);
         }
     }
 
     void invertColor(){
-        if (this->getColor() == static_cast<Color>(0))
-            this->setColor(static_cast<Color>(1));
-        else this->setColor(static_cast<Color>(0));
+        if (this->getColor() == Color::Red)
+            this->setColor(Color::Black);
+        else this->setColor(Color::Red);
     }
 
     TNode* getBrother() {
@@ -245,7 +236,7 @@ public:
     RBTree(){
         Nil = new TNode();
         Nil->setRoom('z', -1);
-        Nil->setColor(static_cast<Color>(1));
+        Nil->setColor(Color::Black);
         root = this->Nil;
     }
     ~RBTree() = default;
@@ -267,21 +258,29 @@ public:
             std::cout << "List is empty.\n";
             return nullptr;
         }
-        while (let > p->getRoomLetter() && p->getRight() != this->Nil)
-            p = p->getRight();
-
-        while (let < p->getRoomLetter() && p->getLeft() != this->Nil)
-            p = p->getLeft();
-
-        while (num > p->getRoomNumber() && p->getRight() != this->Nil && let == p->getRoomLetter())
-            p = p->getRight();
-
-        while (num < p->getRoomNumber() && p->getLeft() != this->Nil && let == p->getRoomLetter())
-            p = p->getLeft();
-
+        while ((p->getRoomNumber() != num || p->getRoomLetter() != let)&&(p != this->Nil)){
+            switch((p->getRoomNumber() < num) + 5*(p->getRoomNumber() > num) + 10*(p->getRoomLetter() < let) + 20*(p->getRoomLetter() > let)){
+                case 1:{
+                   p = p->getRight();
+                   break;
+                };
+                case 5:{
+                    p = p->getLeft();
+                    break;
+                };
+                case 10 ... 15:{
+                    p = p->getRight();
+                    break;
+                };
+                case 20 ... 25:{
+                    p = p->getLeft();
+                    break;
+                };
+            };
+        }
         if (p->getRoomNumber() == num && p->getRoomLetter() == let) return p;
         else {
-            std::cout << "Such room hasn't been found.";
+            std::cout << "Such room hasn't been found.\n";
             return nullptr;
         }
     }
@@ -350,13 +349,13 @@ public:
     }
 
     void RBInsertFixup(TNode*& z){
-        while (z->getParent()->getColor() == static_cast<Color>(0)) {
+        while (z->getParent()->getColor() == Color::Red) {
             if (z->getParent() == z->getParent()->getParent()->getLeft()) {
                 TNode *y = z->getParent()->getParent()->getRight();
-                if (y->getColor() == static_cast<Color>(0)){
-                    z->getParent()->setColor(static_cast<Color>(1));
-                    y->setColor(static_cast<Color>(1));
-                    z->getParent()->getParent()->setColor(static_cast<Color>(0));
+                if (y->getColor() == Color::Red){
+                    z->getParent()->setColor(Color::Black);
+                    y->setColor(Color::Black);
+                    z->getParent()->getParent()->setColor(Color::Red);
                     z = z->getParent()->getParent();
                 }
                 else {
@@ -364,17 +363,17 @@ public:
                         z = z->getParent();
                         LeftRotate(z);
                     }
-                    z->getParent()->setColor(static_cast<Color>(1));
-                    z->getParent()->getParent()->setColor(static_cast<Color>(0));
+                    z->getParent()->setColor(Color::Black);
+                    z->getParent()->getParent()->setColor(Color::Red);
                     RightRotate(z->getParent()->getParent());
                     }
                 }
             else {
                 TNode *y = z->getParent()->getParent()->getLeft();
-                if (y->getColor() == static_cast<Color>(0)){
-                    z->getParent()->setColor(static_cast<Color>(1));
-                    y->setColor(static_cast<Color>(1));
-                    z->getParent()->getParent()->setColor(static_cast<Color>(0));
+                if (y->getColor() == Color::Red){
+                    z->getParent()->setColor(Color::Black);
+                    y->setColor(Color::Black);
+                    z->getParent()->getParent()->setColor(Color::Red);
                     z = z->getParent()->getParent();
                 }
                 else {
@@ -382,13 +381,13 @@ public:
                         z = z->getParent();
                         RightRotate(z);
                     }
-                    z->getParent()->setColor(static_cast<Color>(1));
-                    z->getParent()->getParent()->setColor(static_cast<Color>(0));
+                    z->getParent()->setColor(Color::Black);
+                    z->getParent()->getParent()->setColor(Color::Red);
                     LeftRotate(z->getParent()->getParent());
                 }
             }
         }
-        this->root->setColor(static_cast<Color>(1));
+        this->root->setColor(Color::Black);
      }
 
      void RBTransplant(TNode* u, TNode* v){
@@ -413,6 +412,7 @@ public:
     }
 
     void RBDelete(TNode* z){
+        if (z == nullptr) return;
         TNode* y = z;
         TNode* x;
         Color yOriginColor = y->getColor();
@@ -440,23 +440,23 @@ public:
             y->getLeft()->setParent(y);
             y->setColor(z->getColor());
         }
-        if (yOriginColor == static_cast<Color>(1))
+        if (yOriginColor == Color::Black)
             RBDeleteFixup(x);
     }
 
     void RBDeleteFixup(TNode* x) {
-        while (x != this->root && x->getColor() == static_cast<Color>(1)) {
+        while (x != this->root && x->getColor() == Color::Black) {
             if (x == x->getParent()->getLeft()) {
-                if (x->getBrother()->getColor() == static_cast<Color>(0)) {
+                if (x->getBrother()->getColor() == Color::Red) {
                     x->getBrother()->invertColor();
                     x->getParent()->invertColor();
                     LeftRotate(x->getParent());
                 }
-                    if (x->getBrother()->getLeft()->getColor() == static_cast<Color>(1) &&
-                        x->getBrother()->getRight()->getColor() == static_cast<Color>(1)) {
+                    if (x->getBrother()->getLeft()->getColor() == Color::Black &&
+                        x->getBrother()->getRight()->getColor() == Color::Black) {
                         x->getBrother()->invertColor();
                         x = x->getParent();
-                    } else if (x->getBrother()->getRight()->getColor() == static_cast<Color>(1)) {
+                    } else if (x->getBrother()->getRight()->getColor() == Color::Black) {
                         x->getBrother()->getLeft()->invertColor();
                         x->getBrother()->invertColor();
                         RightRotate(x->getBrother());
@@ -470,16 +470,16 @@ public:
                     }
             }
             else {
-                if (x->getBrother()->getColor() == static_cast<Color>(0)) {
+                if (x->getBrother()->getColor() == Color::Red) {
                     x->getBrother()->invertColor();
                     x->getParent()->invertColor();
                     RightRotate(x->getParent());
                 }
-                if (x->getBrother()->getRight()->getColor() == static_cast<Color>(1) &&
-                    x->getBrother()->getLeft()->getColor() == static_cast<Color>(1)) {
+                if (x->getBrother()->getRight()->getColor() == Color::Black &&
+                    x->getBrother()->getLeft()->getColor() == Color::Black) {
                     x->getBrother()->invertColor();
                     x = x->getParent();
-                } else if (x->getBrother()->getLeft()->getColor() == static_cast<Color>(1)) {
+                } else if (x->getBrother()->getLeft()->getColor() == Color::Black) {
                     x->getBrother()->getRight()->invertColor();
                     x->getBrother()->invertColor();
                     LeftRotate(x->getBrother());
@@ -507,7 +507,7 @@ public:
             while (nodeCount > 0) {
                 TNode* node = q.front();
                 std::cout << node->getRoomLetter() << node->getRoomNumber();
-                if (node->getColor() == static_cast<Color>(0))
+                if (node->getColor() == Color::Red)
                     std::cout << "R";
                 else std::cout << "B";
                 std::cout << node->getRoom()->NodeNumber() << "   ";
@@ -530,10 +530,48 @@ public:
         this->root->PrintPreOrder();
     }
 
-    friend bool operator== (RBTree a, RBTree b){
+    inline bool operator==(RBTree a){
         TNode* roota = a.getRoot();
-        TNode* rootb = b.getRoot();
-        return (roota == rootb);
+        TNode* currenta = roota;
+        TNode* current = root;
+        TNode* aNil = a.getNil();
+        bool check = true;
+        if (roota == aNil && root == Nil) return true;
+        else if ((roota == aNil && root != Nil)||(roota != aNil && root == Nil)) return false;
+        else{
+            do{
+                if (currenta->getLeft() != aNil || current->getLeft() != Nil){
+                    currenta = currenta->getLeft();
+                    current = current->getLeft();
+                }
+                else{
+                    if (currenta->getRight() != aNil || current->getRight() != Nil){
+                        currenta = currenta->getRight();
+                        current = current->getRight();
+                    }
+                    else{
+                       if (current == current->getParent()->getLeft()){
+                           current = current->getParent()->getRight();
+                           currenta = currenta->getParent()->getRight();
+                       }
+                       else {
+                           if (current->getParent() != root){
+                               current = current->getParent()->getParent()->getRight();
+                               currenta = currenta->getParent()->getParent()->getRight();
+                           }
+                           else {
+                               current = root;
+                               currenta = roota;
+                           }
+                       }
+                    }
+                }
+                if ((current == Nil && currenta != aNil)||(current != Nil && currenta == aNil))
+                    check = false;
+            }
+            while (currenta != roota && current != root && check);
+        }
+        return check;
     }
 
     void RBDeleteTree(){
@@ -554,25 +592,28 @@ public:
 int main() {
 
     RBTree* tree = new RBTree();
+    RBTree* tree1 = new RBTree();
 
     char let;
     int num;
     TNode* node = new TNode('A', 100);
-    for (int i = 2; i <= 40; i += 2){
-        tree->RBInsert('A', i);
-    }
+//    for (int i = 2; i <= 40; i += 2){
+//        tree->RBInsert('A', i);
+//        tree1->RBInsert('A', i);
+//    }
+    tree->RBInsert('A', 2);
+    tree->RBInsert('A', 4);
+    tree1->RBInsert('A', 2);
     tree->PrinOnSide(4);
-    std::cout << std::endl << std::endl << std::endl;
-    tree->RBDelete(tree->Find('A', 18));
-    tree->PrinOnSide(4);
-    tree->RBDeleteTree();
+    tree1->PrinOnSide(4);
 
-    std::cout << std::endl << std::endl << std::endl;
+    std::cout << std::endl;
 
-    for (int i = 41; i >= 1; i -= 2){
-        tree->RBInsert('A', i);
-    }
-    tree->PrinOnSide(4);
+    if (*tree == *tree1) {
+        std::cout << "true";
+    } else
+        std:: cout << "false";
+
 
     return 0;
 }
