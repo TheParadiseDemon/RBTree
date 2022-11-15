@@ -412,36 +412,38 @@ public:
     }
 
     void RBDelete(TNode* z){
-        if (z == nullptr) return;
-        TNode* y = z;
-        TNode* x;
-        Color yOriginColor = y->getColor();
-        if (z->getLeft() == this->Nil){
-            x = z->getRight();
-            RBTransplant(z, z->getRight());
-        }
-        else if (z->getRight() == this->Nil){
-            x = z->getLeft();
-            RBTransplant(z, z->getLeft());
-        }
+        if (this->Find(z->getRoomLetter(), z->getRoomNumber())->getRoom()->NodeNumber() > 1)
+            this->Find(z->getRoomLetter(), z->getRoomNumber())->getRoom()->RemoveOne();
         else {
-            y = TreeMin(z->getRight());
-            yOriginColor = y->getColor();
-            x = y->getRight();
-            if (y->getParent() == z)
-                x->setParent(z);
-            else {
-                RBTransplant(y, y->getRight());
-                y->setRight(z->getRight());
-                y->getRight()->setParent(y);
+            if (z == nullptr) return;
+            TNode *y = z;
+            TNode *x;
+            Color yOriginColor = y->getColor();
+            if (z->getLeft() == this->Nil) {
+                x = z->getRight();
+                RBTransplant(z, z->getRight());
+            } else if (z->getRight() == this->Nil) {
+                x = z->getLeft();
+                RBTransplant(z, z->getLeft());
+            } else {
+                y = TreeMin(z->getRight());
+                yOriginColor = y->getColor();
+                x = y->getRight();
+                if (y->getParent() == z)
+                    x->setParent(z);
+                else {
+                    RBTransplant(y, y->getRight());
+                    y->setRight(z->getRight());
+                    y->getRight()->setParent(y);
+                }
+                RBTransplant(z, y);
+                y->setLeft(z->getLeft());
+                y->getLeft()->setParent(y);
+                y->setColor(z->getColor());
             }
-            RBTransplant(z, y);
-            y->setLeft(z->getLeft());
-            y->getLeft()->setParent(y);
-            y->setColor(z->getColor());
+            if (yOriginColor == Color::Black)
+                RBDeleteFixup(x);
         }
-        if (yOriginColor == Color::Black)
-            RBDeleteFixup(x);
     }
 
     void RBDeleteFixup(TNode* x) {
@@ -493,6 +495,7 @@ public:
                 }
             }
         }
+        x->setColor(Color::Black);
     }
 
     void printLevelOrder()
@@ -555,13 +558,13 @@ public:
                            currenta = currenta->getParent()->getRight();
                        }
                        else {
-                           if (current->getParent() != root){
-                               current = current->getParent()->getParent()->getRight();
-                               currenta = currenta->getParent()->getParent()->getRight();
+                           while (current == current->getParent()->getRight() && current != root) {
+                               current = current->getParent();
+                               currenta = currenta->getParent();
                            }
-                           else {
-                               current = root;
-                               currenta = roota;
+                           if (current != root){
+                               current = current->getParent()->getRight();
+                               currenta = currenta->getParent()->getRight();
                            }
                        }
                     }
@@ -597,23 +600,14 @@ int main() {
     char let;
     int num;
     TNode* node = new TNode('A', 100);
-//    for (int i = 2; i <= 40; i += 2){
-//        tree->RBInsert('A', i);
-//        tree1->RBInsert('A', i);
-//    }
-    tree->RBInsert('A', 2);
-    tree->RBInsert('A', 4);
-    tree1->RBInsert('A', 2);
+    for (int i = 2; i <= 40; i += 2){
+        tree->RBInsert('A', i);
+        tree1->RBInsert('A', i);
+    }
+    
     tree->PrinOnSide(4);
     tree1->PrinOnSide(4);
-
-    std::cout << std::endl;
-
-    if (*tree == *tree1) {
-        std::cout << "true";
-    } else
-        std:: cout << "false";
-
-
+    if (*tree == *tree1) std::cout << "true";
+    else std:: cout << "false";
     return 0;
 }
